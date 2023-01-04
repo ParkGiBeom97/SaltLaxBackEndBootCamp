@@ -1,12 +1,7 @@
 package bookproject.view;
 
-import java.util.Optional;
-
-import bookproject.controller.BookSearchController;
-import bookproject.controller.JoinController;
-import bookproject.controller.UserInfoController;
-import bookproject.vo.BookVO;
-import bookproject.vo.UserVO;
+import bookproject.controller.PersonalRental;
+import bookproject.vo.RentalVO;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -20,26 +15,23 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
-public class MyInfoView {
-	
-
+public class UserRentalBookView {
 	private BorderPane logIn = null;
 	private Stage primaryStage = null;
 	private Scene scene = null;
 
-	public MyInfoView() {
+	public UserRentalBookView() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public MyInfoView(Stage primaryStage, Scene scene, BorderPane root) {
+	public UserRentalBookView(Stage primaryStage, Scene scene, BorderPane root) {
 		super();
 		this.primaryStage = primaryStage;
 		this.scene = scene;
 		this.logIn = root;
 	}
 
-	TableView<UserVO> tableView;
-	Button infoBtn;
+	TableView<RentalVO> tableView;
 	Button homeBtn;
 	Button bMBtn;
 	Button rentalTBtn;
@@ -49,7 +41,7 @@ public class MyInfoView {
 	String detailISBN;
 	
 
-	public BorderPane getInfo(String idID) {
+	public BorderPane getRentBook(String idID) {
 		System.out.println("접속한 유저 아이디 :  " + idID);
 		BorderPane root = new BorderPane();
 		root.setPrefSize(900, 500);
@@ -59,24 +51,6 @@ public class MyInfoView {
 		flowpane.setColumnHalignment(HPos.CENTER);
 		flowpane.setPrefSize(900, 40);
 		flowpane.setHgap(10);
-
-
-
-
-
-
-		infoBtn = new Button("내 정보 가져오기");
-		infoBtn.setPrefSize(150, 40);
-
-		infoBtn.setOnAction(e->{
-			
-			System.out.println("유저 정보 가져오는 중...");
-			
-			UserInfoController controller = new UserInfoController();
-			ObservableList<UserVO> list = controller.getResult(idID);
-			
-			tableView.setItems(list);
-		});
 		
 
 		homeBtn = new Button("로그인 화면");
@@ -101,17 +75,17 @@ public class MyInfoView {
 	        primaryStage.setTitle("도서 메인 프로그램 화면");
 		});
 		
-		rentalTBtn = new Button("내가 빌린 책");
+		rentalTBtn = new Button("내가 빌린 책 정보 보기");
 		rentalTBtn.setPrefSize(150, 40);
 		rentalTBtn.setOnAction(e -> {
-			UserRentalBookView rentBook = new UserRentalBookView(primaryStage, scene, root);
-	        scene.setRoot(rentBook.getRentBook(idID));
-	        primaryStage.setScene(scene);
-	        primaryStage.setTitle("내가 빌린 책 목록");
+			
+			PersonalRental controller = new PersonalRental();
+			ObservableList<RentalVO> list = controller.getResult(idID);
+			
+			tableView.setItems(list);
 		});
-
-
-		flowpane.getChildren().add(infoBtn);
+		
+		
 		flowpane.getChildren().add(rentalTBtn);
 		flowpane.getChildren().add(bMBtn);
 		flowpane.getChildren().add(homeBtn);
@@ -119,25 +93,25 @@ public class MyInfoView {
 		flowpane.setHgap(50);
 
 
-		TableColumn<UserVO, String> userId = new TableColumn<>("아이디");
-		userId.setMinWidth(200);
-		userId.setCellValueFactory(new PropertyValueFactory<>("user_ID"));
+		TableColumn<RentalVO, String> booknum = new TableColumn<>("책 번호");
+		booknum.setMinWidth(200);
+		booknum.setCellValueFactory(new PropertyValueFactory<>("bisbn"));
 
-		TableColumn<UserVO, String> userPw = new TableColumn<>("비밀번호");
-		userPw.setMinWidth(200);
-		userPw.setCellValueFactory(new PropertyValueFactory<>("user_PW"));
+		TableColumn<RentalVO, String> btitle = new TableColumn<>("책 제목");
+		btitle.setMinWidth(200);
+		btitle.setCellValueFactory(new PropertyValueFactory<>("btitle"));
 
-		TableColumn<UserVO, String> userEm = new TableColumn<>("이메일");
-		userEm.setMinWidth(200);
-		userEm.setCellValueFactory(new PropertyValueFactory<>("user_EM"));
+		TableColumn<RentalVO, String> user_ID = new TableColumn<>("유저 아이디");
+		user_ID.setMinWidth(200);
+		user_ID.setCellValueFactory(new PropertyValueFactory<>("user_ID"));
 
-		TableColumn<UserVO, Integer> userP = new TableColumn<>("보유 포인트");
-		userP.setMinWidth(200);
-		userP.setCellValueFactory(new PropertyValueFactory<>("user_point"));
+		TableColumn<RentalVO, java.sql.Date> retalDay = new TableColumn<>("빌린 날짜");
+		retalDay.setMinWidth(200);
+		retalDay.setCellValueFactory(new PropertyValueFactory<>("rentalDay"));
 
-		tableView = new TableView<UserVO>();
+		tableView = new TableView<RentalVO>();
 
-		tableView.getColumns().addAll(userId, userPw, userEm, userP);
+		tableView.getColumns().addAll(booknum, btitle, user_ID, retalDay);
 		
 
 
@@ -148,6 +122,5 @@ public class MyInfoView {
 		return root;
 
 	}
-	
-	
+
 }

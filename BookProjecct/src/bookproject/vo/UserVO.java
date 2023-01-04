@@ -1,12 +1,16 @@
 package bookproject.vo;
 
-import java.sql.Connection;
+
 
 public class UserVO {
 	private String user_ID;
 	private String user_PW;
 	private String user_EM;
 	private int user_point;
+	
+	public UserVO() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	public UserVO(String user_ID, String user_PW, String user_EM, int user_point) {
 		super();

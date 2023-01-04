@@ -1,7 +1,14 @@
 package bookproject.view;
 
+import java.util.Optional;
+
+import bookproject.controller.BookRentMinusController;
 import bookproject.controller.BookSearchController;
+import bookproject.controller.JoinController;
+import bookproject.controller.RentalController;
 import bookproject.vo.BookVO;
+import bookproject.vo.RentalVO;
+import bookproject.vo.UserVO;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -43,6 +50,7 @@ public class BookSingUp {
 	Button deleteBtn;
 	Button myBtn;
 	Button homeBtn;
+	Button rentalBtn;
 
 	String deleteISBN;
 	String searchKeyword;
@@ -81,23 +89,18 @@ public class BookSingUp {
 		deleteBtn.setDisable(true);
 
 		deleteBtn.setOnAction(e -> {
+			
 		});
 
 		myBtn = new Button("내정보");
 		myBtn.setPrefSize(150, 40);
+		//내정보 버튼을 누름 
 		myBtn.setOnAction(e -> {
-			Dialog<String> dialog = new Dialog<String>();
-			dialog = new Dialog<String>();
-			dialog.setTitle("내 정보 확인");
-			System.out.println("내 정보 출력");
-			ButtonType type = new ButtonType("OK", ButtonData.OK_DONE);
-			dialog.setContentText("내 아이디 : " + idID);
-
-			System.out.println();
-
-			dialog.getDialogPane().setMinSize(700, 200);
-			dialog.getDialogPane().getButtonTypes().add(type);
-			dialog.show();
+			
+			MyInfoView info = new MyInfoView(primaryStage,scene,root);
+			scene.setRoot(info.getInfo(idID));
+			primaryStage.setScene(scene);
+	        primaryStage.setTitle("내 정보창");
 
 		});
 
@@ -111,11 +114,23 @@ public class BookSingUp {
 				e1.printStackTrace();
 			}
 		});
+		
+		rentalBtn = new Button("대여 현황 보러가기");
+		rentalBtn.setPrefSize(150, 40);
+		rentalBtn.setOnAction(e -> {
+			EveryRentalBookView every = new EveryRentalBookView(primaryStage,scene,root);
+			scene.setRoot(every.getRentBook(idID));
+			primaryStage.setScene(scene);
+	        primaryStage.setTitle("도서 대출 현황");
+		});
+		
 
 		flowpane.getChildren().add(textField);
 		flowpane.getChildren().add(deleteBtn);
 		flowpane.getChildren().add(myBtn);
+		flowpane.getChildren().add(rentalBtn);
 		flowpane.getChildren().add(homeBtn);
+		flowpane.setVgap(15);
 
 		TableColumn<BookVO, String> isbnColumn = new TableColumn<>("책 번호");
 		isbnColumn.setMinWidth(140);
@@ -159,19 +174,34 @@ public class BookSingUp {
 
 				// 더블클릭했을 때의 이벤트 처리
 				if (e1.getClickCount() == 2) {
-					Dialog<String> dialog = new Dialog<String>();
+					Dialog<ButtonType> dialog = new Dialog<>();
 
 					dialog.setTitle("책 상세 정보");
 					System.out.println("두번클릭 상세정보 띄우기");
 
 					ButtonType type = new ButtonType("OK", ButtonData.OK_DONE);
-					dialog.setContentText("왜 눌림?");
+					ButtonType rentalBtn = new ButtonType("대여", ButtonData.OK_DONE);
+					
+					dialog.setContentText("|책 번호 :  "+book.getBisbn()+"| |책 제목 :  "+book.getBtitle()+
+							"| |책 페이지수 :  "+book.getBpage()+"| |출판사 :  " +book.getBpublisher()+"| "+"\n 해당 도서를 대여하시겠습니까??");
 
 					dialog.getDialogPane().setMinSize(700, 200);
-					dialog.getDialogPane().getButtonTypes().add(type);
-					dialog.show();
+					dialog.getDialogPane().getButtonTypes().addAll(rentalBtn, type);
+
 					
+					Optional<ButtonType> result = dialog.showAndWait();
 					
+					 if(result.get().getText().equals("대여")) {
+						 System.out.println("대여 버튼 누름");
+						 
+				    	 RentalController controller = new RentalController();
+				    	 ObservableList<RentalVO> list = controller.getRental(book.getBisbn(), book.getBtitle(), idID);
+				    	 
+				    	 BookRentMinusController controllerM = new BookRentMinusController();
+				    	 ObservableList<BookVO> listM = controllerM.getMinus(book.getBisbn());
+						 
+					 }
+
 				}
 			});
 			return row;

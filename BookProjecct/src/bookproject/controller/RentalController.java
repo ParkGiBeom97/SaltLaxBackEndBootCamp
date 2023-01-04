@@ -5,17 +5,14 @@ import bookproject.vo.RentalVO;
 import bookproject.vo.UserVO;
 import javafx.collections.ObservableList;
 
+public class RentalController {
 
-public class JoinController {
-
-	public ObservableList<UserVO> getResult(String id, String pw, String em) {
+	public ObservableList<RentalVO> getRental(String bisbn, String btitle, String idID) {
 		
-		ObservableList<UserVO> list = 
-				BookService.joinUser(id, pw, em);
+		ObservableList<RentalVO> list = 
+				BookService.RentalTable(bisbn, btitle, idID);
 		
 		return list;
 	}
-
-
 
 }

@@ -11,9 +11,34 @@ public class BookVO {
 	private String btranslator;
 	private String bsupplement;
 	private String bpublisher;
+	private int BookRental;
 	
+	public BookVO(String bisbn, String btitle, String bdate, int bpage, int bprice, String bauthor, String btranslator,
+			String bsupplement, String bpublisher, int bookRental) {
+		super();
+		this.bisbn = bisbn;
+		this.btitle = btitle;
+		this.bdate = bdate;
+		this.bpage = bpage;
+		this.bprice = bprice;
+		this.bauthor = bauthor;
+		this.btranslator = btranslator;
+		this.bsupplement = bsupplement;
+		this.bpublisher = bpublisher;
+		this.BookRental = bookRental;
+	}
+
 	public BookVO() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+	public BookVO(String bisbn, String btitle, int bookRental) {
+		super();
+		this.bisbn = bisbn;
+		this.btitle = btitle;
+		BookRental = bookRental;
 	}
 
 	public BookVO(String bisbn, String btitle, String bdate, int bpage, int bprice, String bauthor, String btranslator,
@@ -31,6 +56,13 @@ public class BookVO {
 	}
 	
 	
+	
+	
+
+	public BookVO(int bookRental) {
+		super();
+		BookRental = bookRental;
+	}
 
 	public BookVO(String bisbn, String btitle, String bauthor, int bprice, int bpage, String bpublisher) {
 		super();
@@ -41,6 +73,7 @@ public class BookVO {
 		this.bpage = bpage;
 		this.bpublisher = bpublisher;
 	}
+
 
 	public String getBisbn() {
 		return bisbn;
@@ -112,6 +145,14 @@ public class BookVO {
 
 	public void setBpublisher(String bpublisher) {
 		this.bpublisher = bpublisher;
+	}
+
+	public int getBookRental() {
+		return BookRental;
+	}
+
+	public void setBookRental(int bookRental) {
+		BookRental = bookRental;
 	}
 
 	

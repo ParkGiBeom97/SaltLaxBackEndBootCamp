@@ -98,7 +98,7 @@ public class BookJoinView{
     	  
     	  
     	  JoinController controller = new JoinController();
-    	  ObservableList<UserVO> list = controller.getResult(idtf.getText(), pwtf.getText());
+    	  ObservableList<UserVO> list = controller.getResult(idtf.getText(), pwtf.getText(), emailtf.getText());
     	  
     	  
     	  //회원가입하면 나와야되는 부분임
