@@ -49,19 +49,19 @@ public class BookJoinView{
       root.setPrefSize(700, 500);
       
       id = new Text("아이디 입력");
-      id.setWrappingWidth(50);
+      id.setWrappingWidth(100);
       
       idtf = new TextField();
       idtf.setPrefSize(200, 40);
       
       pw = new Text("비밀번호 입력");
-      pw.setWrappingWidth(50);
+      pw.setWrappingWidth(100);
       
       pwtf = new TextField();
       pwtf.setPrefSize(200, 40);
       
       email = new Text("이메일 입력");
-      email.setWrappingWidth(50);
+      email.setWrappingWidth(100);
       
       emailtf = new TextField();
       emailtf.setPrefSize(200, 40);

@@ -1,15 +1,13 @@
 package bookproject.view;
 
-
-import java.util.Date;
 import java.util.Optional;
 
 import bookproject.controller.BookRentMinusController;
 import bookproject.controller.BookSearchController;
+import bookproject.controller.DeleteBookController;
 import bookproject.controller.RentalController;
-import bookproject.controller.RentalLogController;
+import bookproject.controller.UpdateBookController;
 import bookproject.vo.BookVO;
-import bookproject.vo.LogVO;
 import bookproject.vo.RentalVO;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -28,17 +26,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
-public class BookSingUp {
+public class adminView {
+
 
 	private BorderPane logIn = null;
 	private Stage primaryStage = null;
 	private Scene scene = null;
 
-	public BookSingUp() {
+	public adminView() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public BookSingUp(Stage primaryStage, Scene scene, BorderPane root) {
+	public adminView(Stage primaryStage, Scene scene, BorderPane root) {
 		super();
 		this.primaryStage = primaryStage;
 		this.scene = scene;
@@ -49,10 +48,15 @@ public class BookSingUp {
 	TextField textField;
 	TextField textField1;
 	TextField textField2;
-	Button deleteBtn;
-	Button myBtn;
+	
+	Button insertBtn;
 	Button homeBtn;
 	Button rentalBtn;
+	Button updateBtn;
+	Button deleteBtn;
+	Button logBtn;
+
+	String bookISBN;
 	String searchKeyword;
 	String detailISBN;
 	
@@ -69,32 +73,64 @@ public class BookSingUp {
 		flowpane.setHgap(10);
 
 		textField = new TextField();
-		textField.setPrefSize(250, 40);
-
+		textField.setPrefSize(230, 40);
+		
 		// 검색창에 엔터를 눌렀을때 이벤트 처리
 		textField.setOnAction(e -> {
 			BookSearchController controller = new BookSearchController();
-
-			ObservableList<BookVO> list = controller.getResult(textField.getText());
-
+			searchKeyword = textField.getText();
+			ObservableList<BookVO> list = controller.getResult(searchKeyword);
 			tableView.setItems(list);
 			textField.clear();
 		});
 
-		myBtn = new Button("내정보");
-		myBtn.setPrefSize(150, 40);
-		//내정보 버튼을 누름 
-		myBtn.setOnAction(e -> {
+
+		// 책 삽입 버튼
+		insertBtn = new Button("책 추가하기");
+		insertBtn.setPrefSize(140, 40);
+		insertBtn.setOnAction(e -> {
 			
-			MyInfoView info = new MyInfoView(primaryStage,scene,root);
-			scene.setRoot(info.getInfo(idID));
-			primaryStage.setScene(scene);
-	        primaryStage.setTitle("내 정보창");
+			InsertBookView insertB = new InsertBookView(primaryStage,scene,root);
+	        scene.setRoot(insertB.getSignUp(idID, searchKeyword));
+	        primaryStage.setScene(scene);
+	        primaryStage.setTitle("책 추가하기");
+	        
+
+	        
+	        
+		});
+		
+		// 책 수정 버튼
+		updateBtn = new Button("책 수정하기");
+		updateBtn.setPrefSize(140, 40);
+		updateBtn.setDisable(true);
+		updateBtn.setOnAction(e -> {
+			System.out.println(bookISBN + "책의 수정버튼을 누름");
+			
+			UpdateBookView updateB = new UpdateBookView(primaryStage,scene,root);
+	        scene.setRoot(updateB.setBook(idID, bookISBN, searchKeyword));
+	        primaryStage.setScene(scene);
+	        primaryStage.setTitle("책 수정하기");
 
 		});
+		
+		// 책 삭제 버튼
 
+		deleteBtn = new Button("선택된 책 삭제");
+		deleteBtn.setPrefSize(140, 40);
+		deleteBtn.setDisable(true);
+		deleteBtn.setOnAction(e -> {
+			 DeleteBookController controller = new DeleteBookController();
+			 ObservableList<BookVO> list = controller.getDelete(bookISBN, searchKeyword);
+			 tableView.setItems(list);
+	    	 
+	    	 RentalVO deleteR = controller.getRBDelete(bookISBN);
+		});
+		
+		
+		//로그인으로 돌아가기
 		homeBtn = new Button("로그인 화면");
-		homeBtn.setPrefSize(150, 40);
+		homeBtn.setPrefSize(140, 40);
 		homeBtn.setOnAction(e -> {
 			BookMain main = new BookMain();
 			try {
@@ -104,22 +140,26 @@ public class BookSingUp {
 			}
 		});
 		
-		rentalBtn = new Button("대여 현황 보러가기");
-		rentalBtn.setPrefSize(150, 40);
-		rentalBtn.setOnAction(e -> {
-			EveryRentalBookView every = new EveryRentalBookView(primaryStage,scene,root);
-			scene.setRoot(every.getRentBook(idID));
+		//로그 기록보는 코드
+		logBtn = new Button("로그 보기");
+		logBtn.setPrefSize(140, 40);
+		logBtn.setOnAction(e -> {
+			LogView log = new LogView(primaryStage, scene, root);
+			scene.setRoot(log.getLog(idID));
 			primaryStage.setScene(scene);
-	        primaryStage.setTitle("도서 대출 현황");
+	        primaryStage.setTitle("로그 기록창");
 		});
 		
 
 		flowpane.getChildren().add(textField);
-		flowpane.getChildren().add(myBtn);
-		flowpane.getChildren().add(rentalBtn);
+		flowpane.getChildren().add(insertBtn);
+		flowpane.getChildren().add(updateBtn);
+		flowpane.getChildren().add(deleteBtn);
+		flowpane.getChildren().add(logBtn);
 		flowpane.getChildren().add(homeBtn);
-		flowpane.setHgap(20);
+		flowpane.setVgap(15);
 
+		
 		TableColumn<BookVO, String> isbnColumn = new TableColumn<>("책 번호");
 		isbnColumn.setMinWidth(140);
 		isbnColumn.setCellValueFactory(new PropertyValueFactory<>("bisbn"));
@@ -157,6 +197,12 @@ public class BookSingUp {
 			TableRow<BookVO> row = new TableRow<>();
 			row.setOnMouseClicked(e1 -> {
 				BookVO book = row.getItem();
+				
+				BookVO book1 = row.getItem();
+				bookISBN = book1.getBisbn();
+				
+				updateBtn.setDisable(false);
+				deleteBtn.setDisable(false);
 
 				// 더블클릭했을 때의 이벤트 처리
 				if (e1.getClickCount() == 2) {
@@ -164,12 +210,14 @@ public class BookSingUp {
 
 					dialog.setTitle("책 상세 정보");
 					System.out.println("두번클릭 상세정보 띄우기");
-
+					
+					
+					
 					ButtonType type = new ButtonType("OK", ButtonData.OK_DONE);
-					ButtonType rentalBtn = new ButtonType("대여", ButtonData.OK_DONE);
+					ButtonType rentalBtn = new ButtonType("삭제", ButtonData.OK_DONE);
 					
 					dialog.setContentText("|책 번호 :  "+book.getBisbn()+"| |책 제목 :  "+book.getBtitle()+
-							"| |책 페이지수 :  "+book.getBpage()+"| |출판사 :  " +book.getBpublisher()+"| "+"\n 해당 도서를 대여하시겠습니까??");
+							"| |책 페이지수 :  "+book.getBpage()+"| |출판사 :  " +book.getBpublisher()+"| "+"\n 선택하신 도서 정보입니다.??");
 
 					dialog.getDialogPane().setMinSize(700, 200);
 					dialog.getDialogPane().getButtonTypes().addAll(rentalBtn, type);
@@ -177,27 +225,28 @@ public class BookSingUp {
 					
 					Optional<ButtonType> result = dialog.showAndWait();
 					
-					 if(result.get().getText().equals("대여")) {
-						 System.out.println("대여 버튼 누름");
+					 if(result.get().getText().equals("삭제")) {
+						 System.out.println("삭제 버튼 누름");
 						 
-				    	 RentalController controller = new RentalController();
-				    	 ObservableList<RentalVO> list = controller.getRental(book.getBisbn(), book.getBtitle(), idID);
+						 //책 테이블 대여테이블 개인대여테이블에서 다 날려야됨
+						 DeleteBookController controller = new DeleteBookController();
+						 ObservableList<BookVO> list = controller.getDelete(book.getBisbn(), searchKeyword);
+						 tableView.setItems(list);
 				    	 
-				    	 BookRentMinusController controllerM = new BookRentMinusController();
-				    	 ObservableList<BookVO> listM = controllerM.getMinus(book.getBisbn());
+				    	 RentalVO deleteR = controller.getRBDelete(book.getBisbn());
 				    	 
-				    	 
-				    	 Date now = new Date();
-				    	 RentalLogController controllerR = new RentalLogController();
-				    	 
-				    	 LogVO log = controllerR.insetRLog(book.getBisbn() ,idID, book.getBtitle(), now);
-						 
+				    	 System.out.println("|책 번호 :  "+book.getBisbn()+"| |책 제목 :  "+book.getBtitle()+
+							"| |책 페이지수 :  "+book.getBpage()+"| |출판사 :  " +book.getBpublisher()+"| "+"\n 해당도서가 삭제되었습니다");
+						
 					 }
-
+					updateBtn.setDisable(true);
+					deleteBtn.setDisable(true);
 				}
 			});
 			return row;
 		});
+	
+		
 
 		root.setCenter(tableView);
 		root.setBottom(flowpane);
@@ -205,6 +254,6 @@ public class BookSingUp {
 		return root;
 
 	}
-
+	
 
 }

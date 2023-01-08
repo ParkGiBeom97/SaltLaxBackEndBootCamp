@@ -43,6 +43,7 @@ public class MyInfoView {
 	Button homeBtn;
 	Button bMBtn;
 	Button rentalTBtn;
+	Button upDateBtn;
 
 	String deleteISBN;
 	String searchKeyword;
@@ -59,10 +60,6 @@ public class MyInfoView {
 		flowpane.setColumnHalignment(HPos.CENTER);
 		flowpane.setPrefSize(900, 40);
 		flowpane.setHgap(10);
-
-
-
-
 
 
 		infoBtn = new Button("내 정보 가져오기");
@@ -109,14 +106,25 @@ public class MyInfoView {
 	        primaryStage.setScene(scene);
 	        primaryStage.setTitle("내가 빌린 책 목록");
 		});
+		
+		upDateBtn = new Button("내정보 수정");
+		upDateBtn.setPrefSize(150, 40);
+		upDateBtn.setOnAction(e -> {
+			UpdateUserView rentBook = new UpdateUserView(primaryStage, scene, root);
+	        scene.setRoot(rentBook.setUser(idID));
+	        primaryStage.setScene(scene);
+	        primaryStage.setTitle("정보 수정하기");
+		});
 
 
 		flowpane.getChildren().add(infoBtn);
 		flowpane.getChildren().add(rentalTBtn);
 		flowpane.getChildren().add(bMBtn);
 		flowpane.getChildren().add(homeBtn);
+		flowpane.getChildren().add(upDateBtn);
 		flowpane.setAlignment(Pos.CENTER);
 		flowpane.setHgap(50);
+		flowpane.setVgap(15);
 
 
 		TableColumn<UserVO, String> userId = new TableColumn<>("아이디");

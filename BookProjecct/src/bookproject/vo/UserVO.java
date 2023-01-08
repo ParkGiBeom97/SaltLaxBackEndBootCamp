@@ -64,8 +64,7 @@ public class UserVO {
 		super();
 		this.user_ID = user_ID;
 		this.user_PW = user_PW;
-	}
-	
+	}	
 	
 	
 }

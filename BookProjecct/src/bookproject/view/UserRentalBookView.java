@@ -1,6 +1,14 @@
 package bookproject.view;
 
+import java.util.Date;
+import java.util.Optional;
 import bookproject.controller.PersonalRental;
+import bookproject.controller.RentalController;
+import bookproject.controller.ReturnBookController;
+import bookproject.controller.ReturnLogController;
+import bookproject.controller.UserPointController;
+import bookproject.vo.BookVO;
+import bookproject.vo.LogVO;
 import bookproject.vo.RentalVO;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -8,8 +16,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -105,13 +117,66 @@ public class UserRentalBookView {
 		user_ID.setMinWidth(200);
 		user_ID.setCellValueFactory(new PropertyValueFactory<>("user_ID"));
 
-		TableColumn<RentalVO, java.sql.Date> retalDay = new TableColumn<>("빌린 날짜");
+		TableColumn<RentalVO, Date> retalDay = new TableColumn<>("빌린 날짜");
 		retalDay.setMinWidth(200);
 		retalDay.setCellValueFactory(new PropertyValueFactory<>("rentalDay"));
 
 		tableView = new TableView<RentalVO>();
 
 		tableView.getColumns().addAll(booknum, btitle, user_ID, retalDay);
+		
+		
+		//반납 화면 구현하기
+		// 테이블의 행을 선택했을때의 이벤트처리
+		tableView.setRowFactory(e -> {
+
+			TableRow<RentalVO> row = new TableRow<>();
+			row.setOnMouseClicked(e1 -> {
+				RentalVO book = row.getItem();
+
+				// 더블클릭했을 때의 이벤트 처리
+				if (e1.getClickCount() == 2) {
+					Dialog<ButtonType> dialog = new Dialog<>();
+
+					dialog.setTitle("책 상세 정보");
+					System.out.println("두번클릭 상세정보 띄우기");
+
+					ButtonType type = new ButtonType("OK", ButtonData.OK_DONE);
+					ButtonType rentalBtn = new ButtonType("반납", ButtonData.OK_DONE);
+					
+					dialog.setContentText(book.getBisbn()+" 해당도서를 반납하시겠습니까??");
+
+					dialog.getDialogPane().setMinSize(700, 200);
+					dialog.getDialogPane().getButtonTypes().addAll(rentalBtn, type);
+
+					
+					Optional<ButtonType> result = dialog.showAndWait();
+					
+					 if(result.get().getText().equals("반납")) {
+						 System.out.println("반납 버튼 누름");
+						 
+						 ReturnBookController controller = new ReturnBookController();
+				    	 RentalVO list = controller.getRenturn(book.getBisbn(), idID, book.getRentalDay());
+				    	 
+				    	 BookVO list1 = controller.getPlusBook(book.getBisbn());
+				    	 
+				    	 ObservableList<RentalVO> list2 = controller.getRenturn1(idID);
+				    	 tableView.setItems(list2);
+				    	 
+				    	 ReturnLogController controllerR = new ReturnLogController();
+				    	 LogVO log = controllerR.insertLog(book.getBisbn(), idID, book.getRentalDay());
+				    	 
+				    	 UserPointController controllerP = new UserPointController();
+				    	 LogVO Plog = controllerP.getPoint(book.getBisbn(), idID);
+				    	 
+				    	 
+						 
+					 }
+
+				}
+			});
+			return row;
+		});
 		
 
 

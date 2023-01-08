@@ -4,13 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Date;
 
 import bookproject.vo.BookVO;
+import bookproject.vo.LogVO;
 import bookproject.vo.RentalVO;
 import bookproject.vo.UserVO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TextField;
 
 public class BookDAO {
 	
@@ -103,7 +105,6 @@ public class BookDAO {
 			
 			while(rs.next()) {
 				user = new UserVO(rs.getString("user_ID"), rs.getString("user_PW"));
-				
 			}
 			
 			rs.close();
@@ -142,7 +143,6 @@ public class BookDAO {
 						rs.getInt("user_point"));
 				list.add(user);
 			}
-			
 			rs.close();
 			pstmt.close();
 			
@@ -185,6 +185,7 @@ public class BookDAO {
 		sql.append("SELECT bisbn, btitle, user_ID, rentalDay ");
 		sql.append("FROM bookrental ");
 		sql.append("WHERE user_ID = ? ");
+		sql.append("ORDER BY rentalDAY desc ");
 		
 		
 		try {
@@ -220,7 +221,7 @@ public class BookDAO {
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT bisbn, btitle, user_ID, rentalDay ");
 		sql.append("FROM bookrental ");
-		
+		sql.append("ORDER BY rentalDAY desc ");
 		
 		try {
 			PreparedStatement pstmt = con.prepareStatement(sql.toString());
@@ -300,6 +301,409 @@ public class BookDAO {
 		}
 		
 		return list;
+	}
+	
+	
+	//개인 대여 도서테이블에서 값 지우기
+	public int returnBook(String bisbn, String idID, Date date) {
+		String sql = ("DELETE FROM bookrental WHERE bisbn = ? AND user_ID = ? AND rentalDay = ?");
+		
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bisbn);
+			pstmt.setString(2, idID);
+			
+			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+			pstmt.setDate(3, sqlDate);
+			
+			System.out.println(pstmt);
+			
+			pstmt.executeUpdate();
+			
+			
+			System.out.println("데이터 삭제 시작!!  " + "책번호 : "+ bisbn+" 삭제 성공");
+			
+			con.commit();
+			
+			pstmt.close();
+			
+		} catch (SQLException e) {
+			
+		}
+		return 0;
+	}
+	
+	//반납한 책 book테이블에 재고 올려주기
+	public int plusBook(String bisbn) {
+		
+		String sql = ("UPDATE book SET bookrental = bookrental + 1 WHERE bisbn = ? ");
+		
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bisbn);
+			
+			pstmt.executeUpdate();
+
+			
+		} catch (SQLException e) {
+			
+		}
+		return 0;
+		
+	}
+	
+	//책테이블에서 책 삭제
+	public int deleteBBook(String bisbn) {
+		String sql = ("DELETE FROM book WHERE bisbn = ? ");
+		
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bisbn);
+			
+			pstmt.executeUpdate();
+
+			
+		} catch (SQLException e) {
+			
+		}
+		return 0;
+	}
+	//대여테이블에서 책 삭제
+	public int deleteRBook(String bisbn) {
+		String sql = ("DELETE FROM bookrental WHERE bisbn = ? ");
+		
+		try {
+			con.setAutoCommit(false);
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bisbn);
+			
+			pstmt.executeUpdate();
+			
+			con.commit();
+
+			
+		} catch (SQLException e) {
+			
+		}
+		return 0;
+	}
+	
+	//책 추가하는 거임 
+	public int addBook(String text, String text2, String text3, int parseInt, int parseInt2, String text4, String text5,
+			String text6, String text7, int parseInt3) {
+
+		String sql = ("INSERT INTO book(bisbn, btitle, bdate, bpage, bprice, bauthor, btranslator, bsupplement, bpublisher, Bookrental) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, text);
+			pstmt.setString(2, text2);
+			pstmt.setString(3, text3);
+			pstmt.setInt(4, parseInt);
+			pstmt.setInt(5, parseInt2);
+			pstmt.setString(6, text4);
+			pstmt.setString(7, text5);
+			pstmt.setString(8, text6);
+			pstmt.setString(9, text7);
+			pstmt.setInt(10, parseInt3);
+			pstmt.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			
+		}
+		return 0;
+	}
+	
+	
+	
+	public int updateBook(String text, String text2, String text3, int parseInt, int parseInt2, String text4,
+			String text5, String text6, String text7, int parseInt3, String bookISBN) {
+		
+			String sql = ("UPDATE book SET bisbn = ?, btitle = ?, bdate = ?, bpage = ?, bprice = ?, bauthor = ?, btranslator = ?, bsupplement = ?, bpublisher= ?, Bookrental = ? WHERE bisbn = ?");
+		
+			try {
+				PreparedStatement pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, text);
+				pstmt.setString(2, text2);
+				pstmt.setString(3, text3);
+				pstmt.setInt(4, parseInt);
+				pstmt.setInt(5, parseInt2);
+				pstmt.setString(6, text4);
+				pstmt.setString(7, text5);
+				pstmt.setString(8, text6);
+				pstmt.setString(9, text7);
+				pstmt.setInt(10, parseInt3);
+				pstmt.setString(11, bookISBN);
+				pstmt.executeUpdate();
+				
+				System.out.println(pstmt);
+				
+				
+			} catch (SQLException e) {
+				
+			}
+			return 0;
+	}
+	public int userUpdate(String string, String string2, String string3, String idID) {
+		String sql = ("UPDATE usertbl SET user_id = ?, user_pw =?,user_em = ? WHERE user_ID = ?");
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, string);
+			pstmt.setString(2, string2);
+			pstmt.setString(3, string3);
+			pstmt.setString(4, idID);
+			
+			pstmt.executeUpdate();
+			
+			System.out.println(pstmt);
+			
+	
+			
+		} catch (SQLException e) {
+			
+		}	
+		return 0;
+	}
+	
+	//로그 기록 가져오기
+	public ObservableList<LogVO> getLog() {
+		
+		
+		String sql = ("SELECT bisbn, user_ID, btitle, rentalDay, returnDay FROM logtbl");
+		ObservableList<LogVO> list = null;		
+		try {
+			
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			System.out.println(pstmt);
+			
+			ResultSet rs = pstmt.executeQuery();
+			list = FXCollections.observableArrayList();
+
+			while(rs.next()) {
+				LogVO log = new LogVO(rs.getString("bisbn"), rs.getString("user_ID"), rs.getString("btitle"), rs.getDate("rentalDay"), rs.getDate("returnDay"));
+				list.add(log);
+				
+			}
+			rs.close();
+			pstmt.close();
+			
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public int inLog(String bisbn, String idID, String btitle, Date now) {
+		String sql = ("INSERT INTO logtbl (bisbn, user_ID, btitle, rentalDay) values (?, ?, ?, ?);");
+				
+				try {
+					PreparedStatement pstmt = con.prepareStatement(sql);
+					pstmt.setString(1, bisbn);
+					pstmt.setString(2, idID);
+					pstmt.setString(3, btitle);
+					
+					java.sql.Date sqlDate = new java.sql.Date(now.getTime());
+					pstmt.setDate(4, sqlDate);
+					
+					pstmt.executeUpdate();
+					
+					System.out.println(pstmt);
+					
+			
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}	
+				return 0;
+	}
+	
+	//반납하면 로그 기록에 반납 시간 업데이트
+	public int inReLog(String bisbn, Date now, String idID, Date date) {
+		String sql = ("UPDATE logtbl SET returnDay = ? WHERE bisbn = ? AND user_id = ? AND  rentalDay = ?");
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			java.sql.Date sqlDate = new java.sql.Date(now.getTime());
+			pstmt.setDate(1, sqlDate);
+			pstmt.setString(2, bisbn);
+			pstmt.setString(3, idID);
+			java.sql.Date sqlRDate = new java.sql.Date(date.getTime());
+			pstmt.setDate(4, sqlRDate);
+			
+			pstmt.execute();
+			
+			System.out.println(pstmt);
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
+	
+	public ObservableList<RentalVO> retrunReflesh(String idID) {
+		ObservableList<RentalVO> list = null;
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT bisbn, btitle, user_ID, rentalDay ");
+		sql.append("FROM bookrental ");
+		sql.append("WHERE user_ID = ? ");
+		sql.append("ORDER BY rentalDAY desc ");
+		
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql.toString());
+
+			pstmt.setString(1, idID);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			list = FXCollections.observableArrayList();
+
+			while(rs.next()) {
+				RentalVO user = new RentalVO(rs.getString("bisbn"),
+						rs.getString("btitle"),
+						rs.getString("user_ID"),
+						rs.getDate("rentalDay"));
+				list.add(user);
+			}
+			
+			rs.close();
+			pstmt.close();
+			
+		} catch (Exception e1) {
+		}
+		
+		return list;
+	}
+	
+	//대여날짜와 반납 날짜를 받아오는 dao
+	public LogVO getBDate(String bisbn) {
+		
+		String sql = "SELECT rentalDay, returnDay FROM logtbl WHERE bisbn = ? ";
+		LogVO day = null;
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bisbn);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			
+			while(rs.next()) {
+				day = new LogVO(rs.getDate("rentalDay"), rs.getDate("returnDay"));
+			}
+			
+			rs.close();
+			pstmt.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return day;
+	}
+	
+	//사용자의 포인트를 올려주는 dao
+	public void upPoint(String idID) {
+
+		String sql = ("UPDATE usertbl SET user_POINT = user_POINT + 1 WHERE user_ID = ?");
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, idID);
+			
+			pstmt.executeUpdate();
+			
+			System.out.println(pstmt);
+			
+			pstmt.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	public void downPoint(String idID, long rDay) {
+		String sql = ("UPDATE usertbl SET user_POINT = user_POINT - (1*?) WHERE user_ID = ?");
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setLong(1, rDay);
+			pstmt.setString(2, idID);
+			
+			pstmt.executeUpdate();
+			
+			System.out.println(pstmt);
+			
+			pstmt.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public UserVO getUserInfo(String idID) {
+		String sql = "SELECT user_ID, user_pw, user_em, user_POINT FROM usertbl WHERE user_id = ? ";
+		UserVO user = null;
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql.toString());
+			pstmt.setString(1, idID);
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			
+			while(rs.next()) {
+				user = new UserVO(rs.getString("user_ID"), rs.getString("user_pw"), rs.getString("user_em"), rs.getInt("user_POINT"));
+			}
+			
+			rs.close();
+			pstmt.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return user;
+	}
+	public BookVO getBookInfo(String bookISBN) {
+		
+		BookVO bv = new BookVO();
+		String sql = ("SELECT bisbn, btitle, bdate, bpage, bprice, bauthor, btranslator, bsupplement, bpublisher, BookRental "
+				+ "FROM book WHERE bisbn = ? ");
+		
+		try {
+			PreparedStatement pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, bookISBN);
+			ResultSet rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				bv = new BookVO(rs.getString("bisbn"), rs.getString("btitle"), rs.getString("bdate"),
+						rs.getInt("bpage"), rs.getInt("bprice"), rs.getString("bauthor"), rs.getString("btranslator"),
+						rs.getString("bsupplement"), rs.getString("bpublisher"), rs.getInt("BookRental"));
+			}
+			
+			rs.close();
+			pstmt.close();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return bv;
 	}
 	
 	

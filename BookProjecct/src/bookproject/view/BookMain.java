@@ -20,10 +20,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class BookMain extends Application {
 	
+	private Text id;
+	private Text pw;
 	TextField textField1;
 	TextField textField2;
 	Button loginBtn;
@@ -45,13 +48,26 @@ public class BookMain extends Application {
 		flowpane1.setPrefSize(900, 40);
 		flowpane1.setHgap(10);
 		
+		FlowPane idFP = new FlowPane();
+		id = new Text("아이디 입력");
+	    id.setWrappingWidth(100);
 		textField1 = new TextField();
 		textField1.setPrefSize(250, 40);
+		idFP.getChildren().add(id);
+		idFP.getChildren().add(textField1);
+		idFP.setHgap(15);
 		
+		FlowPane pwFP = new FlowPane();
+		pw = new Text("비밀번호 입력");
+      	pw.setWrappingWidth(100);
 		textField2 = new TextField();
 		textField2.setPrefSize(250, 40);
-		flowpane1.getChildren().add(textField1);
-		flowpane1.getChildren().add(textField2);
+		pwFP.getChildren().add(pw);
+		pwFP.getChildren().add(textField2);
+		pwFP.setHgap(15);
+		
+		flowpane1.getChildren().add(idFP);
+		flowpane1.getChildren().add(pwFP);
 		
 		loginBtn = new Button("로그인하기");
 		loginBtn.setPrefSize(150, 40);
@@ -93,10 +109,18 @@ public class BookMain extends Application {
 			if(textField1.getText() == "" || textField2.getText() == "") {
 				System.out.println("공백은 안됩니다");
 			} else if(user) {
+				if(textField1.getText().equals("admin")) {
+					System.out.println("관리자모드로 실행합니다");
+					adminView adminmode = new adminView(primaryStage, scene, root1);
+					scene.setRoot(adminmode.getLogin(textField1.getText()));
+					primaryStage.setTitle("관리자모드 실행중...");
+					
+				} else {
 				BookSingUp signupview = new BookSingUp(primaryStage, scene, root1);
 		        scene.setRoot(signupview.getLogin(textField1.getText()));
 		        primaryStage.setScene(scene);
 		        primaryStage.setTitle("도서 메인 프로그램 화면");
+				}
 			}
 		});
 		
