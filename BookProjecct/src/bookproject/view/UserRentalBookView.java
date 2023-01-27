@@ -3,6 +3,7 @@ package bookproject.view;
 import java.util.Date;
 import java.util.Optional;
 import bookproject.controller.PersonalRental;
+import bookproject.controller.RentalController;
 import bookproject.controller.ReturnBookController;
 import bookproject.controller.ReturnLogController;
 import bookproject.controller.UserPointController;
@@ -50,6 +51,7 @@ public class UserRentalBookView {
 	String deleteISBN;
 	String searchKeyword;
 	String detailISBN;
+	
 
 	public BorderPane getRentBook(String idID) {
 		System.out.println("접속한 유저 아이디 :  " + idID);
@@ -61,49 +63,52 @@ public class UserRentalBookView {
 		flowpane.setColumnHalignment(HPos.CENTER);
 		flowpane.setPrefSize(900, 40);
 		flowpane.setHgap(10);
+		
 
 		homeBtn = new Button("로그인 화면");
 		homeBtn.setPrefSize(150, 40);
 		homeBtn.setOnAction(e -> {
 			BookMain main = new BookMain();
 			try {
-
+				
 				main.start(primaryStage);
-
+				
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		});
-
+		
 		bMBtn = new Button("책 목록 화면");
 		bMBtn.setPrefSize(150, 40);
 		bMBtn.setOnAction(e -> {
 			BookSingUp signupview = new BookSingUp(primaryStage, scene, root);
-			scene.setRoot(signupview.getLogin(idID));
-			primaryStage.setScene(scene);
-			primaryStage.setTitle("도서 메인 프로그램 화면");
+	        scene.setRoot(signupview.getLogin(idID));
+	        primaryStage.setScene(scene);
+	        primaryStage.setTitle("도서 메인 프로그램 화면");
 		});
-
+		
 		rentalTBtn = new Button("내가 빌린 책 정보 보기");
 		rentalTBtn.setPrefSize(150, 40);
 		rentalTBtn.setOnAction(e -> {
-
+			
 			PersonalRental controller = new PersonalRental();
-
-			// ObservableList<RentalVO> list = controller.getResult(idID);
-			// tableView.setItems(list);
-
-			// 마이바티스로 내가 빌린 책 정보 보기
+			
+			//ObservableList<RentalVO> list = controller.getResult(idID);
+			//tableView.setItems(list);
+			
+			//마이바티스로 내가 빌린 책 정보 보기
 			ObservableList<RentalVO> listMB = controller.getRentalBookMB(idID);
 			tableView.setItems(listMB);
 
 		});
-
+		
+		
 		flowpane.getChildren().add(rentalTBtn);
 		flowpane.getChildren().add(bMBtn);
 		flowpane.getChildren().add(homeBtn);
 		flowpane.setAlignment(Pos.CENTER);
 		flowpane.setHgap(50);
+
 
 		TableColumn<RentalVO, String> booknum = new TableColumn<>("책 번호");
 		booknum.setMinWidth(200);
@@ -124,8 +129,9 @@ public class UserRentalBookView {
 		tableView = new TableView<RentalVO>();
 
 		tableView.getColumns().addAll(booknum, btitle, user_ID, retalDay);
-
-		// 반납 화면 구현하기
+		
+		
+		//반납 화면 구현하기
 		// 테이블의 행을 선택했을때의 이벤트처리
 		tableView.setRowFactory(e -> {
 
@@ -142,55 +148,46 @@ public class UserRentalBookView {
 
 					ButtonType type = new ButtonType("OK", ButtonData.OK_DONE);
 					ButtonType rentalBtn = new ButtonType("반납", ButtonData.OK_DONE);
-
-					dialog.setContentText(book.getBisbn() + " 해당도서를 반납하시겠습니까??");
+					
+					dialog.setContentText(book.getBisbn()+" 해당도서를 반납하시겠습니까??");
 
 					dialog.getDialogPane().setMinSize(700, 200);
 					dialog.getDialogPane().getButtonTypes().addAll(rentalBtn, type);
 
+					
 					Optional<ButtonType> result = dialog.showAndWait();
-
-					if (result.get().getText().equals("반납")) {
-						System.out.println("반납 버튼 누름");
-
-						ReturnBookController controller = new ReturnBookController();
-						RentalVO list = controller.getRenturn(book.getBisbn(), idID, book.getRentalDay());
-						
-						//마이바티스로 반납 구현
-						//구현해야됨
-
-						BookVO list1 = controller.getPlusBook(book.getBisbn());
-						
-						//마이바티스로 반납시 책 갯수 올려주기
-						//구현해야됨
-						ObservableList<RentalVO> list2 = controller.getRenturn1(idID);
-						tableView.setItems(list2);
-						
-						//마이바티스로 책 반납시 새로 고침
-						//구현해야됨
-						
-						
-						ReturnLogController controllerR = new ReturnLogController();
-						LogVO log = controllerR.insertLog(book.getBisbn(), idID, book.getRentalDay());
-						
-						//마이바티스로 책 반납시 로그 테이블에 추가
-						//구현해야됨
-
-						UserPointController controllerP = new UserPointController();
-						LogVO Plog = controllerP.getPoint(book.getBisbn(), idID);
-						
-						//마이바티스로 포인틀 올려주기
-						
-
-					}
+					
+					 if(result.get().getText().equals("반납")) {
+						 System.out.println("반납 버튼 누름");
+						 
+						 ReturnBookController controller = new ReturnBookController();
+				    	 RentalVO list = controller.getRenturn(book.getBisbn(), idID, book.getRentalDay());
+				    	 
+				    	 BookVO list1 = controller.getPlusBook(book.getBisbn());
+				    	 
+				    	 ObservableList<RentalVO> list2 = controller.getRenturn1(idID);
+				    	 tableView.setItems(list2);
+				    	 
+				    	 ReturnLogController controllerR = new ReturnLogController();
+				    	 LogVO log = controllerR.insertLog(book.getBisbn(), idID, book.getRentalDay());
+				    	 
+				    	 UserPointController controllerP = new UserPointController();
+				    	 LogVO Plog = controllerP.getPoint(book.getBisbn(), idID);
+				    	 
+				    	 
+						 
+					 }
 
 				}
 			});
 			return row;
 		});
+		
+
 
 		root.setCenter(tableView);
 		root.setBottom(flowpane);
+
 
 		return root;
 

@@ -1,15 +1,17 @@
 package bookproject.vo;
 
+
+
 public class UserVO {
 	private String user_ID;
 	private String user_PW;
 	private String user_EM;
 	private int user_point;
-
+	
 	public UserVO() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public UserVO(String user_ID, String user_PW, String user_EM, int user_point) {
 		super();
 		this.user_ID = user_ID;
@@ -24,6 +26,7 @@ public class UserVO {
 		this.user_PW = user_PW;
 		this.user_EM = user_EM;
 	}
+	
 
 	public String getUser_ID() {
 		return user_ID;
@@ -61,6 +64,7 @@ public class UserVO {
 		super();
 		this.user_ID = user_ID;
 		this.user_PW = user_PW;
-	}
-
+	}	
+	
+	
 }

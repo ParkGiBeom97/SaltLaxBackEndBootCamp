@@ -1,7 +1,9 @@
 package bookproject.view;
 
+
 import bookproject.controller.GetLogController;
 import bookproject.vo.LogVO;
+import bookproject.vo.UserVO;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -39,6 +41,7 @@ public class LogView {
 	String deleteISBN;
 	String searchKeyword;
 	String detailISBN;
+	
 
 	public BorderPane getLog(String idID) {
 		System.out.println("접속한 유저 아이디 :  " + idID);
@@ -51,21 +54,24 @@ public class LogView {
 		flowpane.setPrefSize(900, 40);
 		flowpane.setHgap(10);
 
+		
 		infoBtn = new Button("로그 기록 보기");
 		infoBtn.setPrefSize(150, 40);
-		infoBtn.setOnAction(e -> {
-
+		infoBtn.setOnAction(e->{
+			
 			System.out.println("로그기록 가져오기");
-
+			
 			GetLogController controller = new GetLogController();
-			// ObservableList<LogVO> list = controller.getlogController();
-			// tableView.setItems(list);
-
-			// 마이바티스로 책 대여로그 보기
+			//ObservableList<LogVO> list = controller.getlogController();
+			//tableView.setItems(list);
+			
+			
+			//마이바티스로 책 대여로그 보기
 			ObservableList<LogVO> listMB = controller.getLogMB();
 			tableView.setItems(listMB);
 		});
-
+		
+		
 		bMBtn = new Button("책 목록 화면");
 		bMBtn.setPrefSize(150, 40);
 		bMBtn.setOnAction(e -> {
@@ -74,6 +80,7 @@ public class LogView {
 			scene.setRoot(adminmode.getLogin(idID));
 			primaryStage.setTitle("관리자모드 실행중...");
 		});
+		
 
 		homeBtn = new Button("로그인 화면");
 		homeBtn.setPrefSize(150, 40);
@@ -85,6 +92,8 @@ public class LogView {
 				e1.printStackTrace();
 			}
 		});
+	
+
 
 		flowpane.getChildren().add(infoBtn);
 		flowpane.getChildren().add(bMBtn);
@@ -93,6 +102,7 @@ public class LogView {
 		flowpane.setHgap(50);
 		flowpane.setVgap(15);
 
+		
 		TableColumn<LogVO, String> bisbn = new TableColumn<>("책 번호");
 		bisbn.setMinWidth(180);
 		bisbn.setCellValueFactory(new PropertyValueFactory<>("bisbn"));
@@ -116,9 +126,12 @@ public class LogView {
 		tableView = new TableView<LogVO>();
 
 		tableView.getColumns().addAll(bisbn, userId, btitle, retalDay, returnDay);
+		
+
 
 		root.setCenter(tableView);
 		root.setBottom(flowpane);
+
 
 		return root;
 
