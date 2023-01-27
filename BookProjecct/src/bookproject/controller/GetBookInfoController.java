@@ -11,4 +11,10 @@ public class GetBookInfoController {
 		return book;
 	}
 
+	public BookVO getBInfoControllerMB(String bookISBN) {
+		BookService bs = new BookService();
+		BookVO book = bs.getBIServiceMB(bookISBN);
+		return book;
+	}
+
 }

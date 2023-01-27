@@ -79,8 +79,13 @@ public class adminView {
 		textField.setOnAction(e -> {
 			BookSearchController controller = new BookSearchController();
 			searchKeyword = textField.getText();
-			ObservableList<BookVO> list = controller.getResult(searchKeyword);
-			tableView.setItems(list);
+			//ObservableList<BookVO> list = controller.getResult(searchKeyword);
+			//tableView.setItems(list);
+			
+			//마이바티스로 검색
+			ObservableList<BookVO> listMB = controller.getResultMB(searchKeyword);
+			tableView.setItems(listMB);
+
 			textField.clear();
 		});
 
@@ -91,13 +96,10 @@ public class adminView {
 		insertBtn.setOnAction(e -> {
 			
 			InsertBookView insertB = new InsertBookView(primaryStage,scene,root);
-	        scene.setRoot(insertB.getSignUp(idID, searchKeyword));
+	        scene.setRoot(insertB.insertBook(idID, searchKeyword));
 	        primaryStage.setScene(scene);
 	        primaryStage.setTitle("책 추가하기");
-	        
-
-	        
-	        
+      
 		});
 		
 		// 책 수정 버튼
@@ -121,10 +123,20 @@ public class adminView {
 		deleteBtn.setDisable(true);
 		deleteBtn.setOnAction(e -> {
 			 DeleteBookController controller = new DeleteBookController();
+			 
+			 /*
 			 ObservableList<BookVO> list = controller.getDelete(bookISBN, searchKeyword);
 			 tableView.setItems(list);
+			 */
+			 
+			 //마이베티스로 진행하는 삭제
+			 ObservableList<BookVO> listMB = controller.getDeleteMB(bookISBN, searchKeyword);
+			 tableView.setItems(listMB);
 	    	 
-	    	 RentalVO deleteR = controller.getRBDelete(bookISBN);
+	    	 //RentalVO deleteR = controller.getRBDelete(bookISBN);
+			 
+			 //마이바티스로 대여 테이블에서도 책 삭제
+			 RentalVO deleteMB = controller.getRBDeleteMB(bookISBN);
 		});
 		
 		
@@ -230,10 +242,14 @@ public class adminView {
 						 
 						 //책 테이블 대여테이블 개인대여테이블에서 다 날려야됨
 						 DeleteBookController controller = new DeleteBookController();
-						 ObservableList<BookVO> list = controller.getDelete(book.getBisbn(), searchKeyword);
-						 tableView.setItems(list);
-				    	 
-				    	 RentalVO deleteR = controller.getRBDelete(book.getBisbn());
+						 //ObservableList<BookVO> list = controller.getDelete(book.getBisbn(), searchKeyword);
+						 //tableView.setItems(list);
+				    	 //RentalVO deleteR = controller.getRBDelete(book.getBisbn());
+						 
+						 //마이바티스 적용 삭제버튼 이벤트
+						 ObservableList<BookVO> listMB = controller.getDeleteMB(bookISBN, searchKeyword);
+						 RentalVO deleteMB = controller.getRBDeleteMB(bookISBN);
+						 tableView.setItems(listMB);
 				    	 
 				    	 System.out.println("|책 번호 :  "+book.getBisbn()+"| |책 제목 :  "+book.getBtitle()+
 							"| |책 페이지수 :  "+book.getBpage()+"| |출판사 :  " +book.getBpublisher()+"| "+"\n 해당도서가 삭제되었습니다");

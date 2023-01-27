@@ -1,7 +1,7 @@
 package bookproject.vo;
 
 public class BookVO {
-	
+
 	private String bisbn;
 	private String btitle;
 	private String bdate;
@@ -12,7 +12,7 @@ public class BookVO {
 	private String bsupplement;
 	private String bpublisher;
 	private int BookRental;
-	
+
 	public BookVO(String bisbn, String btitle, String bdate, int bpage, int bprice, String bauthor, String btranslator,
 			String bsupplement, String bpublisher, int bookRental) {
 		super();
@@ -31,8 +31,6 @@ public class BookVO {
 	public BookVO() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 
 	public BookVO(String bisbn, String btitle, int bookRental) {
 		super();
@@ -54,10 +52,6 @@ public class BookVO {
 		this.bsupplement = bsupplement;
 		this.bpublisher = bpublisher;
 	}
-	
-	
-	
-	
 
 	public BookVO(int bookRental) {
 		super();
@@ -73,7 +67,6 @@ public class BookVO {
 		this.bpage = bpage;
 		this.bpublisher = bpublisher;
 	}
-
 
 	public String getBisbn() {
 		return bisbn;
@@ -155,5 +148,4 @@ public class BookVO {
 		BookRental = bookRental;
 	}
 
-	
 }

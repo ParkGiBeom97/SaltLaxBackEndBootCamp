@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="mybatiesBook"> <!-- 이름을 하나 부여해줌 ※.은 접근제한자 가 아님 그냥 문자열임 -->
+
+	<update id="update" parameterType="bookproject.vo.BookVO">
+		<![CDATA[
+			UPDATE book SET btitle = #{btitle}, bauthor = #{bauthor}, bprice = #{bprice} WHERE bisbn = #{bisbn}
+		]]>
+	</update>
+
+	<!-- 책 검색하는 마이베티스 작성 -->
+
+	<select id="selectAllBook" parameterType="String"
+		resultType="HashMap">
+		<![CDATA[
+		SELECT bisbn, btitle, bauthor, bprice, bpage, bpublisher FROM book WHERE btitle LIKE CONCAT('%', #{text}, '%')
+		]]>
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="insertUser" parameterType="bookproject.vo.UserVO">
+		<![CDATA[
+		INSERT INTO usertbl (user_id, user_pw, user_EM) VALUES (#{user_ID}, #{user_PW}, #{user_EM})
+		]]>
+	</insert>
+
+	<!-- 로그인 체크를 위한 아이디 비번 가져오기 -->
+	<select id="selectIdPw" parameterType="bookproject.vo.UserVO"
+		resultType="HashMap">
+		<![CDATA[
+		SELECT user_ID, user_PW FROM usertbl WHERE user_ID = #{user_ID} AND user_PW = #{user_PW}
+		]]>
+	</select>
+
+	<!-- 사용자의 본인 정보 가져오기 -->
+	<select id="getUserInfoMB" parameterType="String"
+		resultType="HashMap">
+		<![CDATA[
+		SELECT user_ID, user_PW, user_EM, user_point FROM usertbl WHERE user_ID = #{idID}
+		]]>
+	</select>
+
+	<!-- 도서 대여 테이블을 가져오는 XML -->
+	<select id="getLogMB" resultType="HashMap">
+		<![CDATA[
+		SELECT bisbn, user_ID, btitle, rentalDay, returnDay FROM logtbl
+		]]>
+	</select>
+
+	<!-- 개인 도서 대여 현황 테이블 가져오기 -->
+	<select id="getPersonalRentalNow" resultType="HashMap">
+		<![CDATA[
+		SELECT bisbn, user_ID, btitle, rentalDay FROM bookrental
+		]]>
+	</select>
+
+	<!-- 책 정보 가져오기 -->
+	<select id="selectBookInfo" parameterType="String"
+		resultType="bookproject.vo.BookVO">
+		<![CDATA[
+		SELECT bisbn, btitle, bdate, bpage, bprice, bauthor, btranslator, bsupplement, bpublisher, Bookrental
+		FROM book
+		WHERE bisbn = #{bookISBN}
+		]]>
+	</select>
+
+	<!-- 책 추가하는 SQL문 -->
+	<select id="insertBook" parameterType="bookproject.vo.BookVO">
+		<![CDATA[
+		 INSERT INTO book 
+		 (bisbn, btitle, bdate, bpage, bprice, bauthor, btranslator, bsupplement, bpublisher, Bookrental)
+		 VALUES (#{bisbn}, #{btitle}, #{bdate}, #{bpage}, #{bprice},
+		 #{bauthor}, #{btranslator}, #{bsupplement}, #{bpublisher}, #{BookRental})
+		]]>
+	</select>
+
+	<!-- 책 수정하는 SQL문 -->
+	<update id="updateBook" parameterType="bookproject.vo.BookVO">
+		<![CDATA[
+		 UPDATE book SET bisbn = #{bisbn}, btitle = #{btitle}, bdate = #{bdate}, bprice=#{bprice},
+		 bauthor= #{bauthor}, btranslator= #{btranslator}, bsupplement= #{bsupplement}, bpublisher= #{bpublisher},
+		 bookRental= #{bookRental}
+		 WHERE bisbn = #{bisbn}
+		]]>
+	</update>
+
+	<!-- 관리자가 책을 삭제하는 SQL문 -->
+	<delete id="deleteBook" parameterType="String">
+		<![CDATA[
+		 DELETE FROM book WHERE bisbn = #{bookISBN};
+		]]>
+	</delete>
+
+	<!-- 관리자가 책 삭제하면 렌탈책에서도 지워짐 -->
+	<delete id="deleteRBook" parameterType="String">
+		<![CDATA[
+		 DELETE FROM bookrental WHERE bisbn = #{bookISBN};
+		]]>
+	</delete>
+
+	<!-- 회원정보 수정하는 SQL문 -->
+	<update id="updateUser" parameterType="bookproject.vo.UserVO">
+		<![CDATA[
+			UPDATE userTBL SET user_PW = #{user_PW}, user_EM = #{user_EM} WHERE user_ID = #{user_ID}
+		]]>
+	</update>
+	
+	<!-- 모든 사용자 대여 현황 가져오는 SQL -->
+	<select id="getRAllBook" resultType="HashMap">
+		<![CDATA[
+		SELECT bisbn, btitle, user_ID, rentalDay FROM  bookrental
+		]]>
+	</select>
+	
+	<!-- 사용자 정보 가져오는 SQL -->
+	<select id="getUserE" resultType="bookproject.vo.UserVO">
+		<![CDATA[
+		SELECT user_ID, user_PW, user_EM FROM usertbl WHERE user_ID = #{idID}
+		]]>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

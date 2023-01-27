@@ -1,7 +1,6 @@
 package bookproject.view;
 
 import bookproject.controller.EveryBookRentalController;
-import bookproject.controller.PersonalRental;
 import bookproject.vo.RentalVO;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -40,7 +39,6 @@ public class EveryRentalBookView {
 	String deleteISBN;
 	String searchKeyword;
 	String detailISBN;
-	
 
 	public BorderPane getRentBook(String idID) {
 		System.out.println("접속한 유저 아이디 :  " + idID);
@@ -52,48 +50,50 @@ public class EveryRentalBookView {
 		flowpane.setColumnHalignment(HPos.CENTER);
 		flowpane.setPrefSize(900, 40);
 		flowpane.setHgap(10);
-		
 
 		homeBtn = new Button("로그인 화면");
 		homeBtn.setPrefSize(150, 40);
 		homeBtn.setOnAction(e -> {
 			BookMain main = new BookMain();
 			try {
-				
+
 				main.start(primaryStage);
-				
+
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		});
-		
+
 		bMBtn = new Button("책 목록 화면");
 		bMBtn.setPrefSize(150, 40);
 		bMBtn.setOnAction(e -> {
 			BookSingUp signupview = new BookSingUp(primaryStage, scene, root);
-	        scene.setRoot(signupview.getLogin(idID));
-	        primaryStage.setScene(scene);
-	        primaryStage.setTitle("도서 메인 프로그램 화면");
+			scene.setRoot(signupview.getLogin(idID));
+			primaryStage.setScene(scene);
+			primaryStage.setTitle("도서 메인 프로그램 화면");
 		});
-		
+
 		okBtn = new Button("대여 현황 확인");
 		okBtn.setPrefSize(150, 40);
 		okBtn.setOnAction(e -> {
-			
+
 			EveryBookRentalController controller = new EveryBookRentalController();
-			ObservableList<RentalVO> list = controller.getResult();
+			//ObservableList<RentalVO> list = controller.getResult();
+			//tableView.setItems(list);
+			//마이바티스로 대여 현황 확인하기
+			ObservableList<RentalVO> listMB = controller.getRentalNowController();
+			tableView.setItems(listMB);
 			
-			tableView.setItems(list);
-			
+
+
+
 		});
-		
-		
+
 		flowpane.getChildren().add(okBtn);
 		flowpane.getChildren().add(bMBtn);
 		flowpane.getChildren().add(homeBtn);
 		flowpane.setAlignment(Pos.CENTER);
 		flowpane.setHgap(50);
-
 
 		TableColumn<RentalVO, String> booknum = new TableColumn<>("책 번호");
 		booknum.setMinWidth(200);
@@ -114,12 +114,9 @@ public class EveryRentalBookView {
 		tableView = new TableView<RentalVO>();
 
 		tableView.getColumns().addAll(booknum, btitle, user_ID, retalDay);
-		
-
 
 		root.setCenter(tableView);
 		root.setBottom(flowpane);
-
 
 		return root;
 

@@ -1,7 +1,7 @@
 package bookproject.view;
 
-
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import bookproject.controller.BookRentMinusController;
@@ -46,6 +46,7 @@ public class BookSingUp {
 	}
 
 	TableView<BookVO> tableView;
+	TableView<List> tableViewMB;
 	TextField textField;
 	TextField textField1;
 	TextField textField2;
@@ -55,7 +56,6 @@ public class BookSingUp {
 	Button rentalBtn;
 	String searchKeyword;
 	String detailISBN;
-	
 
 	public BorderPane getLogin(String idID) {
 		System.out.println("접속한 유저 아이디 :  " + idID);
@@ -75,21 +75,25 @@ public class BookSingUp {
 		textField.setOnAction(e -> {
 			BookSearchController controller = new BookSearchController();
 
-			ObservableList<BookVO> list = controller.getResult(textField.getText());
+			// ObservableList<BookVO> list = controller.getResult(textField.getText());
+			// tableView.setItems(list);
 
-			tableView.setItems(list);
+			ObservableList<BookVO> listMB = controller.getResultMB(textField.getText());
+			tableView.setItems(listMB);
+
 			textField.clear();
+
 		});
 
 		myBtn = new Button("내정보");
 		myBtn.setPrefSize(150, 40);
-		//내정보 버튼을 누름 
+		// 내정보 버튼을 누름
 		myBtn.setOnAction(e -> {
-			
-			MyInfoView info = new MyInfoView(primaryStage,scene,root);
+
+			MyInfoView info = new MyInfoView(primaryStage, scene, root);
 			scene.setRoot(info.getInfo(idID));
 			primaryStage.setScene(scene);
-	        primaryStage.setTitle("내 정보창");
+			primaryStage.setTitle("내 정보창");
 
 		});
 
@@ -103,16 +107,15 @@ public class BookSingUp {
 				e1.printStackTrace();
 			}
 		});
-		
+
 		rentalBtn = new Button("대여 현황 보러가기");
 		rentalBtn.setPrefSize(150, 40);
 		rentalBtn.setOnAction(e -> {
-			EveryRentalBookView every = new EveryRentalBookView(primaryStage,scene,root);
+			EveryRentalBookView every = new EveryRentalBookView(primaryStage, scene, root);
 			scene.setRoot(every.getRentBook(idID));
 			primaryStage.setScene(scene);
-	        primaryStage.setTitle("도서 대출 현황");
+			primaryStage.setTitle("도서 대출 현황");
 		});
-		
 
 		flowpane.getChildren().add(textField);
 		flowpane.getChildren().add(myBtn);
@@ -149,8 +152,6 @@ public class BookSingUp {
 		tableView.getColumns().addAll(isbnColumn, titleColumn, authorColumn, priceColumn, bpageColumn,
 				bpublisherColumn);
 
-		
-
 		// 테이블의 행을 선택했을때의 이벤트처리
 		tableView.setRowFactory(e -> {
 
@@ -167,32 +168,36 @@ public class BookSingUp {
 
 					ButtonType type = new ButtonType("OK", ButtonData.OK_DONE);
 					ButtonType rentalBtn = new ButtonType("대여", ButtonData.OK_DONE);
-					
-					dialog.setContentText("|책 번호 :  "+book.getBisbn()+"| |책 제목 :  "+book.getBtitle()+
-							"| |책 페이지수 :  "+book.getBpage()+"| |출판사 :  " +book.getBpublisher()+"| "+"\n 해당 도서를 대여하시겠습니까??");
+
+					dialog.setContentText("|책 번호 :  " + book.getBisbn() + "| |책 제목 :  " + book.getBtitle()
+							+ "| |책 페이지수 :  " + book.getBpage() + "| |출판사 :  " + book.getBpublisher() + "| "
+							+ "\n 해당 도서를 대여하시겠습니까??");
 
 					dialog.getDialogPane().setMinSize(700, 200);
 					dialog.getDialogPane().getButtonTypes().addAll(rentalBtn, type);
 
-					
 					Optional<ButtonType> result = dialog.showAndWait();
-					
-					 if(result.get().getText().equals("대여")) {
-						 System.out.println("대여 버튼 누름");
-						 
-				    	 RentalController controller = new RentalController();
-				    	 ObservableList<RentalVO> list = controller.getRental(book.getBisbn(), book.getBtitle(), idID);
-				    	 
-				    	 BookRentMinusController controllerM = new BookRentMinusController();
-				    	 ObservableList<BookVO> listM = controllerM.getMinus(book.getBisbn());
-				    	 
-				    	 
-				    	 Date now = new Date();
-				    	 RentalLogController controllerR = new RentalLogController();
-				    	 
-				    	 LogVO log = controllerR.insetRLog(book.getBisbn() ,idID, book.getBtitle(), now);
-						 
-					 }
+
+					if (result.get().getText().equals("대여")) {
+						System.out.println("대여 버튼 누름");
+
+						RentalController controller = new RentalController();
+						ObservableList<RentalVO> list = controller.getRental(book.getBisbn(), book.getBtitle(), idID);
+						//마이바티스로 책 구현
+						
+						
+						BookRentMinusController controllerM = new BookRentMinusController();
+						ObservableList<BookVO> listM = controllerM.getMinus(book.getBisbn());
+						//마이바티스로 책 구현 했을 경우 책 갯수 마이너스
+
+						Date now = new Date();
+						RentalLogController controllerR = new RentalLogController();
+						//마이바티스로 
+
+						LogVO log = controllerR.insetRLog(book.getBisbn(), idID, book.getBtitle(), now);
+						//마이바티스로 로그 찍어주기
+
+					}
 
 				}
 			});
@@ -205,6 +210,5 @@ public class BookSingUp {
 		return root;
 
 	}
-
 
 }

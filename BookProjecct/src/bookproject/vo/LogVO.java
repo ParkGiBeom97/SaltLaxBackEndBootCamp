@@ -3,13 +3,13 @@ package bookproject.vo;
 import java.util.*;
 
 public class LogVO {
-	
+
 	private String bisbn;
 	private String user_ID;
 	private String btitle;
 	private Date retalDay;
 	private Date returnDay;
-	
+
 	public LogVO() {
 		// TODO Auto-generated constructor stub
 	}
@@ -35,8 +35,6 @@ public class LogVO {
 		this.retalDay = retalDay;
 		this.returnDay = returnDay;
 	}
-	
-	
 
 	public LogVO(Date retalDay, Date returnDay) {
 		super();
@@ -83,9 +81,5 @@ public class LogVO {
 	public void setReturnDay(Date returnDay) {
 		this.returnDay = returnDay;
 	}
-
-	
-	
-	
 
 }
