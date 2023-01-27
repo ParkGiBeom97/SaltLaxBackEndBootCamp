@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org/DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+
+
+<configuration>
+	<!-- 
+		프로퍼티(propertiey)는 하나만 설정합니다
+		외부파일을 이용해서 데이터베이스 접속정보를 가져올껍니다.
+		외부파일을 하나 만들껍니다. => driver.properties 파일을 만듭니다.
+	 -->
+	 
+	<properties resource="./driver.properties" />
+	
+	<!-- 
+		MyBatis에 대한 기본 세팅정보
+		MyBatis가 동작하는 기본적인 방식에 대한 세팅정보가 있어요
+	 -->
+	 <settings>
+	 	<setting name="jdbcTypeForNull" value="NULL"/>
+	 	<!--  Data가 없을경우 NULL처리 할껍니다 -->
+	 </settings>
+	 	
+	 	
+	 <!-- 별명지정하는것이 나옴 타이핑을 줄이기위해서 사용됩니다 -->
+	 <typeAliases>
+	 	<typeAlias type="example.vo.BookVO" alias="Book"/>
+	 </typeAliases>
+	 
+	 
+	 <!-- 데이터베이스 연결 정보 선언 -->
+	 <environments default="development">
+	 	<environment id="development">
+	 		<!-- 연결환경에 대한 세부사항이 나오면 됨 -->
+	 		<transactionManager type="JDBC">
+	 			<!-- 
+	 				타입이 JDBC면 수동으로 transaction을 처리하는것
+	 				내가 직접 commit, rollback을 처리하는 것
+	 				타입이 MANAGED이면 자동으로 transaction을 관리함
+	 				Container가 transaction을 관리함
+	 			 -->
+	 		</transactionManager>
+	 		<!-- 
+	 			데이터소스 타입이 UNPOOLED면 커넥션풀을 이용하지 않는 거임 
+	 			POOLED는 사용한다는 거
+	 		-->
+	 		<dataSource type="POOLED">
+	 			<!-- 
+	 				실제 연결정보를 적어줍니다
+	 				마이바티스에는 값을 가져올때 두가지 방법이 있다.
+	 				$와 #이 있다.
+	 				#은 문자열 형태로 가져옴(sql의 문자열 형태이므로 '가져올값' 이런 형태로 가져옴)
+	 			 -->
+	 			 <property name="driver" value="${driver}"/>
+	 			 <property name="url" value="${url}"/>
+	 			 <property name="username" value="${user}"/>
+	 			 <property name="password" value="${password}"/>
+	 			 
+	 			 <!-- 데이터베이스 connection pool에 대한 설정이 나올 수 있음 -->
+	 			 
+	 		</dataSource>
+	 	</environment>
+	 </environments>
+	 
+	 <!-- 
+	 	mapping된 sql구문이 있는 XML파일에 대한 설정
+	  -->
+	  <mappers>
+	  	<mapper resource="./sqlmap/Book.xml"/>
+	  </mappers>
+	
+</configuration>
+
+
+
+
+
+
+
+
+
+
